@@ -1,0 +1,36 @@
+## Modelo para um aplicativo web moderno usando Python
+
+Neste tutorial, você criará seu primeiro aplicativo moderno na AWS. 
+Os aplicativos modernos isolam a lógica de negócios, otimizam a reutilização e a iteração, e removem sobrecargas
+sempre que possível. 
+
+Veja mais sobre: 
+[AWS com Python](https://aws.amazon.com/pt/getting-started/hands-on/build-modern-app-fargate-lambda-dynamodb-python/)
+
+-- Você vai implementar o Mythical Mysfits usando estes módulos:
+
+# Criar um site estático 
+
+1.Faça login no Console AWS
+2.Selecione uma região
+3.Crie um novo ambiente do AWS Cloud9
+4.Clone o Repositório do workshop do Mythical Mysfits
+  $ git clone -b python https://github.com/aws-samples/aws-modern-application-workshop.git
+5.No terminal, mude para o diretório do repositório recém-clonado:
+  $ cd aws-modern-application-workshop  
+6.Crie um bucket do S3 e configure-o para hospedagem de site
+  $ aws s3 mb s3://REPLACE_ME_BUCKET_NAME
+7.  Essa configuração permite que os objetos do bucket sejam solicitados usando um nome de DNS público registrado para o bucket, 
+além de solicitações diretas do local ao caminho básico do nome de DNS para a página inicial de um site selecionado (index.html, 
+na maioria dos casos)
+  $ aws s3 website s3://REPLACE_ME_BUCKET_NAME --index-document index.html
+8.Atualize a Política de bucket S3
+  $ aws s3api put-bucket-policy --bucket REPLACE_ME_BUCKET_NAME --policy
+   \ file://~/environment/aws-modern-application-workshop/module-1/aws-cli/website-bucket-policy.json
+9.Publique o conteúdo do site no S3
+  $ aws s3 cp ~/environment/aws-modern-application-workshop/module-1/web/index.html s3://REPLACE_ME_BUCKET_NAME/index.html 
+10.Para leste dos eua-1 (Norte da Virgínia), oeste dos eua-2 (Oregon), oeste da europa-1 (Irlanda), use
+   $ http://REPLACE_ME_BUCKET_NAME.s3-website-REPLACE_ME_YOUR_REGION.amazonaws.com
+11.Para leste dos eua-2 (Ohio), use
+   $  http://REPLACE_ME_BUCKET_NAME.s3-website.REPLACE_ME_YOUR_REGION.amazonaws.com  
+

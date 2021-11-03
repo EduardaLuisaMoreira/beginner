@@ -1,0 +1,49 @@
+Alguns comandos utlizados no Kubernetes:
+
+kubectl get 
+  listar recursos
+kubectl describe 
+  mostrar informações detalhadas sobre um recurso
+kubectl logs 
+  mostrar os logs de um container em um Pod
+kubectl exec  
+  executar um comando em um contêiner em um Pod
+kubectl get pods
+  para listar os pods
+kubectl get services
+  funcionar para deployments e services
+kubectl describe pod <nome-pod>
+  para detalhes de um pod
+kubectl describe service <nome>
+  funciona para deployment e service
+kubectl create -f <nome-arquivo-yml>
+  para criar pod, deployment ou service a partir de um arquivo yml
+kubectl delete -f <nome-arquivo-yml>
+  para remover pod, deployment ou service a partir de um arquivo yml
+kubectl delete pod <nome-pod>
+  para remover um pod
+kubectl delete deployment <nome-deployment>
+  para remover um deployment
+kubectl delete service <nome-service>
+  para remover um service
+minibube service <nome-do-servico> --url
+  pegar url do service
+kubectl autoscale \
+  deployment \
+  <nome-do-servico> \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=10
+              Escalando
+minikube addons list
+  para listar os addons
+minikube addons enable metrics-server
+  para habilitar
+minikube addons disable metrics-server
+  para desabilitar
+minikube start
+  para iniciar a minikube
+minikube stop
+  para parar a minikube
+minikube deleted
+  para apagar a minikube

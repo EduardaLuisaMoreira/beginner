@@ -1,0 +1,41 @@
+## Modelo para um aplicativo web moderno usando Python
+
+Neste tutorial, você criará seu primeiro aplicativo moderno na AWS. 
+Os aplicativos modernos isolam a lógica de negócios, otimizam a reutilização e a iteração, e removem sobrecargas
+sempre que possível. 
+
+Veja mais sobre: 
+[AWS com Python](https://aws.amazon.com/pt/getting-started/hands-on/build-modern-app-fargate-lambda-dynamodb-python/)
+
+-- Você vai implementar o Mythical Mysfits usando estes módulos:
+
+# Amarzenar dados dos mysfits
+
+1.Crie uma tabela do DynamoDB
+  $ aws dynamodb create-table --cli-input-json 
+  \ file://~/environment/aws-modern-application-workshop/module-3/aws-cli/dynamodb-table.json
+2.Visualizar os detalhes da tabela recém-criada 
+  $ aws dynamodb describe-table --table-name MysfitsTable
+  $ aws dynamodb scan --table-name MysfitsTable
+___________________________________________
+    "Count": 0,
+    "Items": [],
+    "ScannedCount": 0,
+    "ConsumedCapacity": null
+}
+___________________________________________
+
+3.Adicionar itens à tabela do DynamoDB
+  $ aws dynamodb batch-write-item --request-items
+  \  file://~/environment/aws-modern-application-workshop/module-3/aws-cli/populate-dynamodb.json
+  $ aws dynamodb scan --table-name MysfitsTable
+4.Copie o código do serviço Flask atualizado
+  $ cp ~/environment/aws-modern-application-workshop/module-3/app/service/* 
+    ~/environment/MythicalMysfitsService-Repository/service/
+5.Copie o código do serviço Flask atualizado
+  $ cd ~/environment/MythicalMysfitsService-Repository
+  $ git add .
+  $ git commit -m "Add new integration to DynamoDB."
+  $ git push
+6.Atualize o conteúdo do site no S3
+  $ aws s3 cp --recursive ~/environment/aws-modern-application-workshop/module-3/web/ s3://your_bucket_name_here/ 

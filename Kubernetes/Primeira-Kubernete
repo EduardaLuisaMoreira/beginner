@@ -1,0 +1,134 @@
+## Aprenda a usar primeira vez kubernetes
+
+# Criando um Deployment
+
+1.Usando o comando kubectl create para criar um Deployment que gerencia um Pod.
+O Pod executa um contêiner baseado na imagem docker disponibilizada.
+  $ kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4
+
+2.Visualizando o Deployment
+  $ kubectl get deployments
+
+A saída será semelhante a:
+________________________________________________________________________
+
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+hello-node   1/1     1            1           
+________________________________________________________________________
+
+3.Visualizando o Pod:
+  $ kubectl get pods
+
+A saída será semelhante a:
+________________________________________________________________________
+
+NAME                          READY     STATUS    RESTARTS   AGE
+hello-node-5f76cf6ccf-br9b5   1/1       Running   0          1m
+________________________________________________________________________
+
+4.Visualizando os eventos do cluster
+  $ kubectl get events
+
+5.Visualizando a configuração do kubectl:
+  $ kubectl config view
+
+# Criando um Serviço
+
+1.Expondo o Pod usando o comando kubectl expose
+  $ kubectl expose deployment hello-node --type=LoadBalancer --port=8080
+
+2.Visualizando o serviço que você acabou de criar:
+  $ kubectl get services
+
+A saída será semelhante a:
+________________________________________________________________________________
+
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+hello-node   LoadBalancer   10.108.144.78   <pending>     8080:30369/TCP   21s
+kubernetes   ClusterIP      10.96.0.1       <none>        443/TCP          23m  
+________________________________________________________________________________
+
+3.Executar o comando a seguir
+  $ minikube service hello-node
+
+# Habiltando Complementos (addons)
+
+1.Abra o painel do Kubernetes em um navegador:
+  $ minikube dashboard
+
+2.Listando os complementos suportados atualmente:
+  $ minikube addons list
+
+A saída será semelhante a:
+________________________________________________________________________________
+addon-manager: enabled
+dashboard: enabled
+default-storageclass: enabled
+efk: disabled
+freshpod: disabled
+gvisor: disabled
+helm-tiller: disabled
+ingress: disabled
+ingress-dns: disabled
+logviewer: disabled
+metrics-server: disabled
+nvidia-driver-installer: disabled
+nvidia-gpu-device-plugin: disabled
+registry: disabled
+registry-creds: disabled
+storage-provisioner: enabled
+storage-provisioner-gluster: disabled
+________________________________________________________________________________
+
+3.Habilitando um complemento, por exemplo, metrics-server:
+  $ minikube addons enable metrics-server
+
+A saída será semelhante a:
+________________________________________________________________________________
+metrics-server was successfully enabled
+________________________________________________________________________________
+
+4.Visualizando os Pods e os Serviços que você acabou de criar:
+  $ kubectl get pod,svc -n kube-system
+
+A saída será semelhante a:
+______________________________________________________________________________________________________
+NAME                                        READY     STATUS    RESTARTS   AGE
+pod/coredns-5644d7b6d9-mh9ll                1/1       Running   0          34m
+pod/coredns-5644d7b6d9-pqd2t                1/1       Running   0          34m
+pod/metrics-server-67fb648c5                1/1       Running   0          26s
+pod/etcd-minikube                           1/1       Running   0          34m
+pod/influxdb-grafana-b29w8                  2/2       Running   0          26s
+pod/kube-addon-manager-minikube             1/1       Running   0          34m
+pod/kube-apiserver-minikube                 1/1       Running   0          34m
+pod/kube-controller-manager-minikube        1/1       Running   0          34m
+pod/kube-proxy-rnlps                        1/1       Running   0          34m
+pod/kube-scheduler-minikube                 1/1       Running   0          34m
+pod/storage-provisioner                     1/1       Running   0          34m
+
+NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+service/metrics-server         ClusterIP   10.96.241.45    <none>        80/TCP              26s
+service/kube-dns               ClusterIP   10.96.0.10      <none>        53/UDP,53/TCP       34m
+service/monitoring-grafana     NodePort    10.99.24.54     <none>        80:30002/TCP        26s
+service/monitoring-influxdb    ClusterIP   10.111.169.94   <none>        8083/TCP,8086/TCP   26s
+______________________________________________________________________________________________________
+
+5.Desabilitando o complemento metrics-server:
+  $ minikube addons disable metrics-server
+
+A saída será semelhante a:
+________________________________________________________________________________
+metrics-server was successfully disabled
+________________________________________________________________________________
+
+# Removendo os recursos do Minikube
+
+1.Agora você pode remover todos os recursos criados no seu cluster:
+  $ kubectl delete service hello-node
+  $ kubectl delete deployment hello-node
+
+2.Pare a máquina virtual (VM) do Minikube:
+  $ minikube stop
+
+3.Remova a VM do Minikube:
+  $ minikube delete

@@ -1,0 +1,44 @@
+## Criação de um bucket
+
+Veja mais sobre: (https://docs.aws.amazon.com/pt_br/AmazonS3/latest/userguide/create-bucket-overview.html)
+
+1.Faça login no AWS Management Console e abra o console do Amazon S3 em https://console.aws.amazon.com/s3/.
+
+2.Selecione Create bucket (Criar bucket). O assistente Create bucket (Criar bucket) é aberto.
+
+3.Em Bucket name (Nome do bucket), insira um nome compatível com o DNS para seu bucket.
+
+O nome do bucket deve:
+
+- Seja exclusivo em todo o Amazon S3.
+- Ter entre 3 e 63 caracteres.
+- Não contém caracteres maiúsculos.
+- Começar com uma letra minúscula ou um número.
+
+Depois de criado o bucket, você não pode mudar seu nome. Para obter informações sobre nomeação de buckets, 
+consulte Regras de nomeação de bucket.
+
+4.Em Region (Região), escolha a Região da AWS onde deseja que o bucket resida.
+Escolha uma região próxima de você para minimizar a latência e os custos e atender aos requisitos regulatórios. Os objetos 
+armazenados em uma região nunca saem dessa região, a menos que você os transfira para outra região. Para obter uma lista das 
+Regiões da AWS do Amazon S3, consulte Endpoints de serviço da AWS na Referência geral da Amazon Web Services.
+
+5.Em Bucket settings for Block Public Access (Configurações de bucket para o Bloqueio de acesso público), escolha as configurações
+de bloqueio de acesso público que deseja aplicar ao bucket.
+Recomendamos que você mantenha todas as configurações ativadas, a menos que saiba que precisa desativar uma ou mais delas para 
+seu caso de uso, como para hospedar um site público. As configurações de bloqueio de acesso público que você habilitar para o 
+bucket também serão ativadas para todos os pontos de acesso criados no bucket. Para obter mais informações sobre como bloquear o
+acesso público, consulte Bloquear o acesso público ao armazenamento do Amazon S3.
+
+6.(Opcional) Se você quiser habilitar o Bloqueio de Objetos do S3, faça o seguinte:
+
+- Escolha Advanced settings (Configurações avançadas) e leia a mensagem exibida.Importante
+Você só pode habilitar o bloqueio de objetos do S3 para um bucket ao criá-lo. Se você habilitar o bloqueio de objetos 
+para o bucket, não poderá desabilitá-lo mais tarde. A ativação do bloqueio de objetos também permite o versionamento para 
+o bucket. Depois de habilitar o bloqueio de objetos para o bucket, você deve definir as configurações de bloqueio de objetos
+antes que qualquer objeto no bucket seja protegido. 
+Para obter mais informações sobre como configurar a proteção para objetos, consulte Usar o S3 Object Lock.
+- Se quiser ativar o Object Lock, insira enable na caixa de texto e escolha Confirm (Confirmar).
+Para obter mais informações sobre o recurso Bloqueio de Objeto do S3, consulte Usar o S3 Object Lock.
+
+7.Selecione Create bucket (Criar bucket).

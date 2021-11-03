@@ -1,0 +1,58 @@
+## Tutorial do IAM: criar e anexar sua primeira política gerenciada pelo cliente
+
+Veja mais sobre: (https://docs.aws.amazon.com/pt_br/IAM/latest/UserGuide/tutorial_managed-policies.html)
+
+# Criar a política
+
+1.Faça login no console do IAM no https://console.aws.amazon.com/iam/ com o usuário que tem permissões de administrador.
+
+2.No painel de navegação, selecione Policies (Políticas).
+
+3.No painel de conteúdo, escolha Criar política.
+
+4.Escolha a guia JSON e copie o texto do documento de política JSON a seguir. Cole este texto na caixa de texto do JSON.
+
+________________________________________________________________________________
+{
+    "Version": "2012-10-17",
+    "Statement": [ {
+        "Effect": "Allow",
+        "Action": [
+            "iam:GenerateCredentialReport",
+            "iam:Get*",
+            "iam:List*"
+        ],
+        "Resource": "*"
+    } ]
+}
+________________________________________________________________________________
+
+5.Resolva os avisos de segurança, erros ou avisos gerais gerados durante a validação de política e, depois, 
+selecione Review policy (Revisar política).
+
+6.Na página Revisar, digite UsersReadOnlyAccessToIAMConsole para o nome da política. Analise o Resumo da política para ver as
+permissões concedidas pela sua política e, em seguida, escolha Criar política para salvar seu trabalho.
+A nova política aparece na lista de políticas gerenciadas e está pronta para ser anexada.
+
+# Anexar a política
+
+1.No console do IAM, no painel de navegação, escolha Políticas.
+
+2.Na parte superior da lista de políticas, na caixa de pesquisa, comece a digitar UsersReadOnlyAccesstoIAMConsole até ver a política.
+Depois, marque a caixa de seleção ao lado de UsersReadOnlyAccessToIAMConsole na lista.
+
+3.Selecione o botão Actions (Ações) e escolha Attach (Anexar).
+
+4.Em Filtrar, escolha Usuários.
+
+5.Na caixa de pesquisa, comece a digitar PolicyUser até que o usuário fique visível na lista. Depois, marque a caixa de seleção
+ao lado desse usuário na lista.
+
+6.Escolha Attach Policy.
+
+# Testar o acesso do usuário
+
+1.Faça login no console do IAM em https://console.aws.amazon.com/iam/ com o usuário de teste PolicyUser.
+
+2.Navegue pelas páginas do console e tente criar um novo usuário ou grupo. Observe que PolicyUser pode exibir dados, mas não
+ pode criar ou modificar dados existentes do IAM.

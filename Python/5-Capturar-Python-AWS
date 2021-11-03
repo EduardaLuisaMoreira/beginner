@@ -1,0 +1,41 @@
+## Modelo para um aplicativo web moderno usando Python
+
+Neste tutorial, você criará seu primeiro aplicativo moderno na AWS. 
+Os aplicativos modernos isolam a lógica de negócios, otimizam a reutilização e a iteração, e removem sobrecargas
+sempre que possível. 
+
+Veja mais sobre: 
+[AWS com Python](https://aws.amazon.com/pt/getting-started/hands-on/build-modern-app-fargate-lambda-dynamodb-python/)
+
+-- Você vai implementar o Mythical Mysfits usando estes módulos:
+
+# Capturar cliques de usuário
+
+1.Crie um novo repositório do CodeCommit
+  $ aws codecommit create-repository --repository-name MythicalMysfitsStreamingService-Repository
+  $ cd ~/environment/
+  $ git clone {insert the copied cloneValueUrl from above}
+2.Copie a base do código do serviço de streaming
+  $ cd ~/environment/MythicalMysfitsStreamingService-Repository/
+  $ cp -r ~/environment/aws-modern-application-workshop/module-5/app/streaming/* .
+  $ cp ~/environment/aws-modern-application-workshop/module-5/cfn/* .  
+3.Use o pip para instalar as dependências da função do Lambda
+  $ pip install requests -t .
+4.Atualize o código da função do Lambda
+5.Envie o código para o CodeCommit
+  $ git add .
+  $ git commit -m "New stream processing service."
+  $ git push
+6.Crie um bucket do S3 para pacotes de código de função do Lambda
+7.Use a CLI do SAM para empacotar o código para o Lambda
+  $ sam package --template-file ./real-time-streaming.yml --output-template-file ./transformed-streaming.yml 
+  --s3-bucket replace-with-your-bucket-name
+8.Implante a pilha usando o AWS CloudFormation
+  $ aws cloudformation deploy --template-file /home/ec2-user/environment/MythicalMysfitsStreamingService-Repository/cfn/transformed-streaming.yml 
+  --stack-name MythicalMysfitsStreamingStack --capabilities CAPABILITY_IAM
+9.Atualize o conteúdo do site
+  $ aws cloudformation describe-stacks --stack-name MythicalMysfitsStreamingStack
+10.Envie a nova versão do site para o S3
+   $ aws s3 cp ~/environment/aws-modern-application-workshop/module-5/web/index.html s3://YOUR-S3-BUCKET/  
+11.Limpe o workshop
+   $ aws cloudformation delete-stack --stack-name STACK-NAME-HERE   

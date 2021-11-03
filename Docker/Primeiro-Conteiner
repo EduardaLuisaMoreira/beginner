@@ -1,0 +1,160 @@
+## Aprenda criar primeiro container Docker
+
+# Pré-Requisitos:
+
+Antes de iniciar a instalação certifique-se de ter permissão de super usuário, será necessário adicionar o repositório do Docker 
+com seu sistema operacional para realizar o download do pacote, para isso execute a sequência de comandos a seguir:
+
+1.Atualizando da lista de pacotes do repositório atual:
+ $ sudo apt-get update
+
+2.Instalando pacotes para permitir o apt utilizar repositórios sobre HTTPS:
+ $ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+3.Instalando a chave criptográfica do repositório:
+ $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+4. Adicionando o repositório do Docker à lista de repositórios do sistema operacional:
+ $ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+# Instalação:
+
+Agora sim poderemos iniciar a instalação do Docker, siga os passos:
+
+1.Atualizando da lista de pacotes do repositório atual:
+ $ sudo apt-get update
+
+2.Instalando a última versão do Docker e seus componentes:
+ $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+# Build da imagem:
+
+Nesta etapa faremos o build de uma aplicação para gerar uma imagem de container que será executada posterirormente 
+para simularmos um deploy. Para isso iremos utilizar um componente do Docker chamado Dockerfile, 
+um arquivo de configuração que irá nos auxiliar no build, contendo informações como imagem de referência, 
+arquivos a serem copiados e pacotes adicionais para dependências da aplicação para a construção da imagem do container. 
+Siga os passos abaixo:
+
+1.Crie um diretório qualquer para utilizarmos na construção da imagem, após isso entre neste diretório como no exemplo:
+ mkdir docker-lab ; cd docker-lab
+
+2.Agora vamos criar um arquivo com nome “Dockerfile” e inserir automaticamente o seu conteúdo, para isso digite na linha 
+de comando o que está abaixo:
+
+____________________________________________________________________________________________________________
+ cat << EOF > Dockerfile
+ # Imagem de referência Python
+ FROM python:3.7-slim
+
+ # Selecionando o diretório do container para a execução dos comandos a seguir
+ WORKDIR /app
+
+ # Copiando o conteúdo do diretório que criamos para dentro do diretório do container
+ COPY . /app
+
+ # Instalando pacotes adicionais informados no arquivo requisitos.txt
+ RUN pip install --trusted-host pypi.python.org -r requisitos.txt
+
+ # Habilitando a porta 80 do container para receber conexões externas
+ EXPOSE 80
+
+ # Definindo variável de ambiente
+ ENV NAME World
+
+ # Executando aplicação Python após inicialização do container
+ CMD ["python", "app.py"]
+ EOF
+____________________________________________________________________________________________________________
+
+3.Agora no mesmo diretório que estamos, crie um arquivo chamado “requisitos.txt” com o conteúdo “Flask” que será 
+utilizado para informar os pacotes adicionais como no exemplo:
+echo Flask > requisitos.txt
+
+4. Criaremos agora o arquivo de nossa aplicação Python, assim continuando no mesmo diretório criaremos um arquivo com o 
+nome de app.py e vamos inserir novamente ao mesmo tempo o seu conteúdo, assim digite na linha de comando o que está abaixo:
+
+____________________________________________________________________________________________________________
+ cat << EOF > app.py
+ from flask import Flask
+ import os
+ import socket
+
+ app = Flask(__name__)
+
+ @app.route("/")
+ def hello():
+    html = "<h3>Hello {name}!</h3>" \
+           "<b>Hostname:</b> {hostname}<br/>"
+    return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname())
+
+ if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=80)
+ EOF
+____________________________________________________________________________________________________________
+
+Atenção para a endentação do código!
+
+5.Tudo pronto para realizarmos a construção de nossa imagem. No comando a seguir iremos utilizar o parâmetro “-t” ou “–tag” 
+que servirá para identificarmos a nossa imagem com um nome, apelido ou até mesmo versão. Caso a versão de build não seja 
+informada neste parâmetro o Docker assumirá por padrão que é a última (latest). Ao final do comando também deveremos informar 
+o contexto do Dockerfile, em nosso caso o mesmo diretório em que estamos trabalhando, representado no Linux pelo caracter “.”, 
+veja:
+ $ sudo docker build --tag=testpy .
+
+Para verificar as imagens criadas no Docker você pode executar o comando:
+ $ sudo docker image ls
+
+# Deploy do container:
+
+Agora veremos como iniciar a aplicação construída sendo executada dentro de um container Docker, através da imagem 
+gerada no build:
+
+1.Para iniciar um container Docker utilizaremos o comando abaixo com os parâmetros “-d” para o container ser executado 
+em background, e também o “-p” que indicaremos qual porta de acesso de nosso computador irá direcionar as requisições para a 
+porta que configuramos no container, e também será necessário informar o nome da imagem conforme a tag utilizada anteriormente:
+ $ docker run -d -p 80:80 testpy
+
+Tente acessar no seu browser a url http://localhost/ você deverá visualizar:
+
+2.Para finalizar o container em execução digite o comando abaixo adicionando no final o hostname que foi informado no browser. 
+Esse hostname é o ID do container criado e também pode ser identificado usando o comando “docker container ls”:
+ $ docker container ls
+ $ docker rm -f “id” 
+
+# Apagando Tudo
+
+1.Limpando Todas as Imagens, Contêineres, Volumes e Redes não Utilizadas ou Pendentes
+ $ docker system prune
+
+2.Para remover adicionalmente quaisquer contêineres e todas as imagens não utilizadas (não apenas imagens pendentes), 
+adicione a flag -a ao comando
+ $ docker system prune -a
+
+3.Remover uma ou mais imagens específicas:
+ $ docker rmi Image Image
+
+4. Remover todas as imagens
+ $ docker rmi $(docker images -a -q)
+
+5.Remover um ou mais contêineres específicos
+ $ docker rm ID_or_Name ID_or_Name
+
+6.Remover todos os contêineres finalizados
+ $ docker rm $(docker ps -a -f status=exited -q)
+
+7.Remover um ou mais volumes específicos
+ $ docker volume rm volume_name volume_name
+
+8.Remover um contêiner e seu volume
+ $ docker rm -v container_name
+
+9.Remover volumes pendentes
+ $ docker volume prune

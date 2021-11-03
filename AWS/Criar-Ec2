@@ -1,0 +1,64 @@
+## Tutorial usar instâncias Linux do Amazon EC2
+
+Veja mais sobre:(https://docs.aws.amazon.com/pt_br/AWSEC2/latest/UserGuide/EC2_GetStarted.html)
+
+# Como iniciar uma instância
+
+1.Abra o console do Amazon EC2 em https://console.aws.amazon.com/ec2/.
+
+2.No painel do console, selecione Launch Instance.
+
+3.Na página Choose an Amazon Machine Image (AMI), há uma lista de configurações básicas, chamadas Amazon Machine Images (AMIs),
+ que funcionam como modelos para sua instância. Selecione uma versão HVM do Amazon Linux 2. Observe que essas AMIs estão marcadas 
+ como "Elegíveis para nível gratuito".
+
+4.Na página Choose an Instance Type, você pode selecionar a configuração de hardware de sua instância. Selecione o tipo de 
+ instância t2.micro, que é selecionado por padrão. O tipo de instância t2.micro está qualificado para o nível gratuito.
+ Em regiões onde t2.micro não está disponível, você pode usar uma instância t3.micro no nível gratuito. Para obter mais 
+ informações, consulte Nível gratuito da AWS.
+
+5.Na página Choose an Instance Type (Escolha um tipo de instância), selecione Review and Launch para permitir que o assistente 
+ conclua outras definições de configuração para você.
+
+6.Na página Review Instance Launch, em Security Groups, você verá que o assistente criou e selecionou um security group para 
+ você. Você pode usar esse security group ou, como opção, pode selecionar o security group que você criou ao realizar a 
+ configuração usando as seguintes etapas:
+
+7.Escolha Edit security groups.
+
+8.Na página Configure Security Group, garanta que Select an existing security group esteja selecionado.
+
+9.Selecione o security group na lista de security groups existentes e escolha Review and Launch.
+
+10.Na página Review Instance Launch, escolha Launch.
+
+11.Se um par de chaves for solicitado, selecione Choose an existing key pair e selecione o par de chaves que você criou ao 
+  obter a configuração.Quando estiver pronto, selecione a caixa de confirmação e, então, escolha Launch Instances.
+
+12.Uma página de confirmação informa que sua instância está sendo executada. Selecione Visualizar instâncias para fechar a
+ página de confirmação e voltar ao console.
+
+13.Na tela Instances, é possível visualizar o status da execução. Demora um pouco para executar uma instância. Ao executar 
+ uma instância, seu estado inicial é pending. Após a inicialização da instância, seu estado muda para running e ela recebe um
+ nome DNS público. (Se a coluna Public IPv4 DNS (DNS IPv4 público) estiver oculta, escolha o ícone de configurações (  ) no 
+ canto superior direito, alterne o DNS IPv4 público , e clique em Confirm (Confirmar).
+
+14.Pode levar alguns minutos até que a instância esteja pronta para que você possa se conectar a ela. Verifique se a instância 
+ foi aprovada nas verificações de status da coluna Status Checks (Verificações de status).
+
+# Conectar-se à instância
+Há várias formas de conectar-se a sua instância do Linux. Para obter mais informações, consulte 
+Conecte-se à sua instância do Linux. 
+
+# Limpar a instância
+
+1.No painel de navegação, escolha Instances (Instâncias). Na lista de instâncias, selecione a instância.
+
+2.Escolha Instance state (Estado da instância) e Terminate instance (Encerrar instância).
+
+3.Quando a confirmação for solicitada, escolha Terminate (Encerrar).
+
+O Amazon EC2 desliga e encerra sua instância. Depois que a instância for encerrada, ela permanecerá visível no console 
+por um curto período e a entrada será automaticamente excluída. Você não pode remover a instância encerrada da exibição
+do console.
+

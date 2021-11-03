@@ -1,0 +1,24 @@
+Alguns comandos utlizados no Linux:
+
+ls
+  listagem de arquivos
+cd 
+  navegue pelo sistema de arquivos
+cp
+  copiar arquivos e pastas
+mv
+  mover arquivos e pastas
+more
+  ler arquivos de texto
+df
+  conferir o espaço em disco
+sudo
+  permissões especiais
+grep
+  buscas em textos
+clear
+  limpar o buffer
+ sudo apt-get install pacote
+   instalar um pacote
+sudo apt-get update
+  atualizar os repositorios de seu Ubuntu

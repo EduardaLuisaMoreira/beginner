@@ -1,0 +1,39 @@
+Alguns comandos utlizados no docker:
+
+docker info
+   Para verificarmos as informações
+docker version
+   Ver a versão do nosso Client
+docker image list
+   Para ver as imagens criadas 
+docker container run <parâmetro> <imagem> <cmd> <argumentos>
+   Para ver os parametros 
+docker ps 
+   Para visualizar a lista de containers
+docker ps -a
+   Para visualizar a lista de containers
+docker-compose up –d
+   Iniciado o container a partir de uma imagem é possível gerenciar a utilização com novos comandos.
+docker inspect (id da imagem ou container)
+   Mais detalhes sobre a sua imagem ou o seu contêiner, podemos utilizar o comando inspect
+docker rmi (nome da imagem)
+   Deletar a imagem especifica
+docker system prune
+   Limpando Todas as Imagens, Contêineres, Volumes e Redes não Utilizadas ou Pendentes
+docker system prune -a
+   Para remover adicionalmente quaisquer contêineres e todas as imagens não utilizadas (não apenas imagens pendentes), 
+   adicione a flag -a ao comando
+docker rmi Image Image
+   Remover uma ou mais imagens específicas
+docker rmi $(docker images -a -q)
+   Remover todas as imagens
+docker rm ID_or_Name ID_or_Name
+   Remover um ou mais contêineres específicos
+docker rm $(docker ps -a -f status=exited -q)
+   Remover todos os contêineres finalizados
+docker volume rm volume_name volume_name
+   Remover um ou mais volumes específicos
+docker rm -v container_name
+   Remover um contêiner e seu volume
+docker volume prune      
+   Remover volumes pendentes

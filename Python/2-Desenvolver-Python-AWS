@@ -1,0 +1,124 @@
+## Modelo para um aplicativo web moderno usando Python
+
+Neste tutorial, você criará seu primeiro aplicativo moderno na AWS. 
+Os aplicativos modernos isolam a lógica de negócios, otimizam a reutilização e a iteração, e removem sobrecargas
+sempre que possível. 
+
+Veja mais sobre: 
+[AWS com Python](https://aws.amazon.com/pt/getting-started/hands-on/build-modern-app-fargate-lambda-dynamodb-python/)
+
+-- Você vai implementar o Mythical Mysfits usando estes módulos:
+
+# Desenvolver um site dinâmico
+
+1.Implante modelos do CloudFormation
+  $ aws cloudformation create-stack --stack-name MythicalMysfitsCoreStack --capabilities CAPABILITY_NAMED_IAM --template-body 
+    \ file://~/environment/aws-modern-application-workshop/module-2/cfn/core.yml
+2.Verificar o status de criação da pilha no Console AWS ou executando o comando    
+  $ aws cloudformation describe-stacks --stack-name MythicalMysfitsCoreStack
+3.Execute o comando describe-stacks, até encontrar um status “StackStatus”
+________________________________________________________________________________  
+  ...
+  ],
+  "EnableTerminationProtection": false,
+  "CreationTime": "2018-08-21T00:50:19.184Z",
+  "Capabilities": [
+      "CAPABILITY_NAMED_IAM"
+  ],
+  "StackName": "MythicalmysfitsCoreStack",
+  "NotificatioARNs":[]
+  "StackStatus": "CREATE_COMPLETE",
+  "DisableRollback": false,
+  "RollbackConfiguration":{}
+  }
+ ]
+}
+...
+________________________________________________________________________________
+
+4.Você utilizará os valores da saída deste comando no restante do workshop
+  $ aws cloudformation describe-stacks --stack-name MythicalMysfitsCoreStack > ~/environment/cloudformation-core-output.json
+5.Crie uma imagem do Docker.Primeiro altere o diretório para ~/environment/module-2/app
+  $ cd ~/environment/aws-modern-application-workshop/module-2/app
+6.Quando tiver seu ID de conta, você estará pronto para criar a imagem do Docker
+  $ docker build . -t REPLACE_ME_AWS_ACCOUNT_ID.dkr.ecr.REPLACE_ME_REGION.amazonaws.com/mythicalmysfits/service:latest
+7.Você verá o download do Docker e instalará todos os pacotes de dependência de que nosso aplicativo precisa e gerará a 
+tag para a imagem criada. 
+Copie a tag da imagem para referência posterior. Everá o seguinte 
+__________________________________________________________________________________________________
+
+Successfully built 8bxxxxxxxxab
+Successfully tagged 111111111111.dkr.ecr.us-east-1.amazonaws.com/mythicalmysfits/service:latest
+___________________________________________________________________________________________________
+8.Teste o serviço localmente
+  $ docker run -p 8080:8080 REPLACE_ME_WITH_DOCKER_IMAGE_TAG
+9.Como resultado, o Docker informará que seu contêiner está funcionando localmente:
+________________________________________________________________________________
+ 
+ Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+________________________________________________________________________________
+
+10.Para abrir a demonstração do navegador web, selecione 
+Preview > Preview Running Application (Demonstração > Demonstração de aplicativos em execução) na barra de menus do Cloud9
+11.Envie por push a imagem do Docker para o Amazon ECR
+   $ aws ecr create-repository --repository-name mythicalmysfits/service
+12.Aparecerá se o comando for bem-sucedido 
+   $ (aws ecr get-login --no-include-email)
+13.Envie por push a imagem criada no repositório ECR  
+   $ docker push REPLACE_ME_WITH_DOCKER_IMAGE_TAG
+14.Execute o seguinte comando para ver a imagem do Docker recém-enviada por push armazenada no repositório do ECR
+   $ aws ecr describe-images --repository-name mythicalmysfits/service  
+15.Crie um cluster do AWS Fargate
+   $ aws ecs create-cluster --cluster-name MythicalMysfits-Cluster
+16.Crie um grupo do AWS CloudWatch Logs
+   $ aws logs create-log-group --log-group-name mythicalmysfits-logs
+17.Abra ~/environment/aws-modern-application-workshop/module-2/aws-cli/task-definition.json no IDE.
+   Substitua os valores indicados pelos apropriados com base nos recursos criados.Registre uma definição de tarefa do ECS
+   $ aws ecs register-task-definition --cli-input-json
+   \ file://~/environment/aws-modern-application-workshop/module-2/aws-cli/task-definition.json 
+18.Crie um Network Load Balancer
+   $ aws elbv2 create-load-balancer --name mysfits-nlb --scheme internet-facing --type network --subnets 
+   \ REPLACE_ME_PUBLIC_SUBNET_ONE REPLACE_ME_PUBLIC_SUBNET_TWO > ~/environment/nlb-output.json  
+19.Crie um grupo de destino do Load Balancer
+   $ aws elbv2 create-target-group --name MythicalMysfits-TargetGroup --port 8080 --protocol TCP --target-type ip --vpc-id
+   \ REPLACE_ME_VPC_ID --health-check-interval-seconds 10 --health-check-path / --health-check-protocol HTTP 
+   \ --healthy-threshold-count 3 --unhealthy-threshold-count 3 > ~/environment/target-group-output.json
+20.Crie um listener do load balancer
+   $aws elbv2 create-listener --default-actions TargetGroupArn=REPLACE_ME_NLB_TARGET_GROUP_ARN,Type=forward --load-balancer-arn 
+   \ REPLACE_ME_NLB_ARN --port 80 --protocol TCP
+21.Crie uma função vinculada a serviços para o ECS
+  $ aws iam create-service-linked-role --aws-service-name ecs.amazonaws.com
+22.Crie o serviço.Abra ~/environment/aws-modern-application-workshop/module-2/aws-cli/service-definition.json no IDE
+   e substitua os valores indicados de REPLACE_ME. Salve e execute o seguinte comando para criar o serviço:
+   $   aws ecs create-service --cli-input-json 
+   \ file://~/environment/aws-modern-application-workshop/module-2/aws-cli/service-definition.json
+23.Teste o serviço
+    http://mysfits-nlb-123456789-abc123456.elb.us-east-1.amazonaws.com/mysfits
+24.Substitua o endpoint da API
+25.Faça upload no S3
+   $ aws s3 cp ~/environment/aws-modern-application-workshop/module-2/web/index.html s3://INSERT-YOUR-BUCKET-NAME/index.html
+26.Crie um bucket do S3 para artefatos do pipeline
+   $ aws s3 mb s3://REPLACE_ME_CHOOSE_ARTIFACTS_BUCKET_NAME
+27.Abra este arquivo. Dentro dele, você precisará substituir várias strings para incluir os ARNs criados como parte do MythicalMysfitsCoreStack
+   anteriormente, bem como o nome de bucket recém-escolhido para os seus artefatos CI/CD 
+   $  aws s3api put-bucket-policy --bucket REPLACE_ME_ARTIFACTS_BUCKET_NAME --policy 
+   \ file://~/environment/aws-modern-application-workshop/module-2/aws-cli/artifacts-bucket-policy.json    
+28.Crie um repositório do CodeCommit
+   $ aws codecommit create-repository --repository-name MythicalMysfitsService-Repository
+29.Crie um projeto CodeBuild
+   $ aws codebuild create-project --cli-input-json
+   \ file://~/environment/aws-modern-application-workshop/module-2/aws-cli/code-build-project.json
+30.Crie um pipeline CodePipeline
+   $ aws codepipeline create-pipeline --cli-input-json 
+   \ file://~/environment/aws-modern-application-workshop/module-2/aws-cli/code-pipeline.json
+31.Habilite o acesso automatizado ao repositório de imagem do ECR
+   $ aws ecr set-repository-policy --repository-name mythicalmysfits/service --policy-text 
+   \ file://~/environment/aws-modern-application-workshop/module-2/aws-cli/ecr-policy.json
+32.Use o Git com o AWS CodeCommit
+  $ git config --global user.name "REPLACE_ME_WITH_YOUR_NAME"
+  $ git config --global user.email REPLACE_ME_WITH_YOUR_EMAIL@example.com
+  $ git config --global credential.helper '!aws codecommit credential-helper $@'
+  $ git config --global credential.UseHttpPath true
+  $ cd ~/environment/
+  $ git clone https://git-codecommit.REPLACE_REGION.amazonaws.com/v1/repos/MythicalMysfitsService-Repository
+  $ cp -r ~/environment/aws-modern-application-workshop/module-2/app/* ~/environment/MythicalMysfitsService-Repository/

@@ -1,0 +1,62 @@
+## Modelo para um aplicativo web moderno usando Python
+
+Neste tutorial, você criará seu primeiro aplicativo moderno na AWS. 
+Os aplicativos modernos isolam a lógica de negócios, otimizam a reutilização e a iteração, e removem sobrecargas
+sempre que possível. 
+
+Veja mais sobre: 
+[AWS com Python](https://aws.amazon.com/pt/getting-started/hands-on/build-modern-app-fargate-lambda-dynamodb-python/)
+
+-- Você vai implementar o Mythical Mysfits usando estes módulos:
+
+# Adicionar registro de usuários
+
+1.Criar o pool de usuários do Cognito
+  $ aws cognito-idp create-user-pool --pool-name MysfitsUserPool --auto-verified-attributes email
+2.Crie um cliente de pool de usuários do Cognito
+  $ aws cognito-idp create-user-pool-client --user-pool-id REPLACE_ME --client-name MysfitsUserPoolClient
+3.Crie um link VPC do API Gateway
+  $ aws apigateway create-vpc-link --name 
+  \ MysfitsApiVpcLink --target-arns REPLACE_ME_NLB_ARN > ~/environment/api-gateway-link-output.json
+________________________________________________________________________________ 
+...
+{
+    "status": "PENDING",
+    "targetArns": [
+        "YOUR_ARN_HERE"
+    ],
+    "id": "abcdef1",
+    "name": "MysfitsApiVpcLink"
+}
+...
+________________________________________________________________________________ 
+
+4.Crie a API REST usando o Swagger
+  $ aws apigateway import-rest-api --parameters endpointConfigurationTypes=REGIONAL --body 
+  \ file://~/environment/aws-modern-application-workshop/module-4/aws-cli/api-swagger.json --fail-on-warnings
+________________________________________________________________________________   
+...
+{
+    "name": "MysfitsApi",
+    "endpointConfiguration": {
+        "types": [
+            "REGIONAL"
+        ]
+    },
+    "id": "abcde12345",
+    "createdDate": 1529613528
+}
+...
+________________________________________________________________________________ 
+
+5.Implante a API
+  $ aws apigateway create-deployment --rest-api-id REPLACE_ME_WITH_API_ID --stage-name prod
+  https://REPLACE_ME_WITH_API_ID.execute-api.REPLACE_ME_WITH_REGION.amazonaws.com/prod
+6.Atualize o back-end do serviço Flask
+  $ cd ~/environment/MythicalMysfitsService-Repository/
+  $ cp -r ~/environment/aws-modern-application-workshop/module-4/app/* .
+  $ git add .
+  $ git commit -m "Update service code backend to enable additional website features."
+  $ git push  
+7.Atualize o site Mythical Mysfits em S3
+  $ aws s3 cp --recursive ~/environment/aws-modern-application-workshop/module-4/web/ s3://YOUR-S3-BUCKET/ 

@@ -1,0 +1,68 @@
+## Aprenda criar primeira imagem Docker
+
+# Criando a primeira imagem usando o Dockerfile
+
+1.No ambiente Linux abra um terminal de comandos e crie uma pasta chamada "teste" que será a pasta de trabalho
+ $ mkdir teste
+ $ cd teste
+ $ code .
+
+2.A seguir abra o seu editor de códigos
+
+3.Crie um arquivo chamado DockerFile (sem extensão) com o seguinte conteúdo 
+
+______________________________________________________
+# define a imagem base
+FROM ubuntu:latest
+# define o mantenedor da imagem
+LABEL maintainer="Teste"
+# Atualiza a imagem com os pacotes
+RUN apt-get update && apt-get upgrade -y
+# Instala o NGINX para testar
+RUN apt-get install nginx -y
+# Expoe a porta 80
+EXPOSE 80
+# Comando para iniciar o NGINX no Container
+CMD ["nginx", "-g", "daemon off;"]
+______________________________________________________
+
+4.Para processar o arquivo Dockerfile usamos o comando
+ $ docker build -t teste/nginx:1.0 .
+
+5.Para conferir digite o comando 
+ $ docker images
+
+6.Para testar a imagem vamos criar um contêiner
+ $ docker container run --name TESTE -p 80:80 teste/nginx:1.0
+
+7. Agora basta abrir  um navegador e acessar http://localhost para visualizar a página padrão do nginx sendo exibida
+
+# Apagando Tudo
+
+1.Limpando Todas as Imagens, Contêineres, Volumes e Redes não Utilizadas ou Pendentes
+ $ docker system prune
+
+2.Para remover adicionalmente quaisquer contêineres e todas as imagens não utilizadas (não apenas imagens pendentes), 
+adicione a flag -a ao comando
+ $ docker system prune -a
+
+3.Remover uma ou mais imagens específicas:
+ $ docker rmi Image Image
+
+4. Remover todas as imagens
+ $ docker rmi $(docker images -a -q)
+
+5.Remover um ou mais contêineres específicos
+ $ docker rm ID_or_Name ID_or_Name
+
+6.Remover todos os contêineres finalizados
+ $ docker rm $(docker ps -a -f status=exited -q)
+
+7.Remover um ou mais volumes específicos
+ $ docker volume rm volume_name volume_name
+
+8.Remover um contêiner e seu volume
+ $ docker rm -v container_name
+
+9.Remover volumes pendentes
+ $ docker volume prune

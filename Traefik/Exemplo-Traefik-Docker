@@ -1,0 +1,95 @@
+## Traefik com Docker
+
+Traefik é um proxy reverso HTTP moderno e balanceador de carga que facilita a implantação de microsserviços.
+Traefik se integra com seus componentes de infraestrutura existentes ( Docker , modo Swarm , Kubernetes , Marathon , Consul , 
+Etcd , Rancher , Amazon ECS , ...) e se configura automática e dinamicamente.
+Apontar o Traefik para o seu orquestrador deve ser a única etapa de configuração necessária.
+
+# Traefik v2 - Exemplo de uso
+
+1.Habilite o dockerprovedor e a IU da web:
+________________________________________________________________________
+- traefik.yml
+# Docker configuration backend
+providers:
+  docker:
+    defaultRule: "Host(`{{ trimPrefix `/` .Name }}.docker.localhost`)"
+
+# API and dashboard configuration
+api:
+  insecure: true
+________________________________________________________________________
+
+2.Comece Traefik:
+  $ docker run -d -p 8080:8080 -p 80:80 \
+    -v $PWD/traefik.yml:/etc/traefik/traefik.yml \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    traefik:v2.0
+
+3.Inicie um servidor de back-end, denominado test:
+  $ docker run -d --name test containous/whoami
+
+4.E por último, você pode acessar o seu whoamiservidor através do Traefik, no nome do domínio test.docker.localhost:
+  $ curl --header 'Host:test.docker.localhost' 'http://localhost:80/'
+  $ curl test.docker.localhost
+  Hostname: 390a880bdfab
+  IP: 127.0.0.1
+  IP: 172.17.0.3
+  GET / HTTP/1.1
+  Host: test.docker.localhost
+  User-Agent: curl/7.65.3
+  Accept: */*
+  Accept-Encoding: gzip
+  X-Forwarded-For: 172.17.0.1
+  X-Forwarded-Host: test.docker.localhost
+  X-Forwarded-Port: 80
+  X-Forwarded-Proto: http
+  X-Forwarded-Server: 7e073cb54211
+  X-Real-Ip: 172.17.0.1
+
+- A IU da web http: // localhost: 8080 lhe dará uma visão geral dos roteadores, serviços e middlewares.
+
+
+# Traefik v1 - Exemplo de uso
+
+1.Pegue um arquivo de configuração de amostra e renomeie-o para traefik.toml. Habilite o dockerprovedor e a IU da web:
+________________________________________________________________________
+- traefik.toml
+
+# API and dashboard configuration
+[api]
+
+# Docker configuration backend
+[docker]
+  domain = "docker.localhost"
+________________________________________________________________________
+
+2.Comece Traefik:
+  $ docker run -d -p 8080:8080 -p 80:80 \
+    -v $PWD/traefik.toml:/etc/traefik/traefik.toml \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    traefik:v1.7
+
+3.Inicie um servidor de back-end, denominado test:
+  $ docker run -d --name test containous/whoami
+
+4.E por último, você pode acessar o seu whoamiservidor através do Traefik, no nome do domínio {containerName}.{configuredDomain}
+( test.docker.localhost):
+  $ curl --header 'Host:test.docker.localhost' 'http://localhost:80/'
+  $ curl 'http://test.docker.localhost'
+  Hostname: 117c5530934d
+  IP: 127.0.0.1
+  IP: ::1
+  IP: 172.17.0.3
+  IP: fe80::42:acff:fe11:3
+  GET / HTTP/1.1
+  Host: test.docker.localhost
+  User-Agent: curl/7.35.0
+  Accept: */*
+  Accept-Encoding: gzip
+  X-Forwarded-For: 172.17.0.1
+  X-Forwarded-Host: 172.17.0.3:80
+  X-Forwarded-Proto: http
+  X-Forwarded-Server: f2e05c433120
+
+- A IU da web http: // localhost: 8080 oferece uma visão geral dos front-ends / back-ends e também um painel de integridade.

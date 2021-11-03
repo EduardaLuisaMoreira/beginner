@@ -1,0 +1,75 @@
+## Aprenda a usar primeira vez Git
+
+1.Observe que você pode obter documentação para um comando
+  $ man git-log
+  $ git help log
+
+2.Apresentar-se ao Git com seu nome e endereço de e-mail público antes de fazer qualquer operação
+  $ git config --global user.name "Seu nome vem aqui"
+  $ git config --global user.email you@yourdomain.example.com
+
+# Importando um novo projeto
+
+1.Suponha que você tenha um tarball project.tar.gz com seu trabalho inicial. 
+  Você pode colocá-lo sob o controle de revisão Git da seguinte maneira.
+  $ tar xzf project.tar.gz
+  projeto $ cd
+  $ git init
+
+2.Git irá responder
+_________________________________________________________
+Repositório Git vazio inicializado em .git /
+_________________________________________________________
+
+Agora você inicializou o diretório de trabalho - você pode notar um novo diretório criado, denominado ".git".
+Em seguida, diga ao Git para tirar um instantâneo do conteúdo de todos os arquivos no diretório atual (observe o . ), 
+
+3.Com git add :
+  $ git add.
+
+4.Este instantâneo agora está armazenado em uma área de teste temporária que Git chama de "índice". 
+ Você pode armazenar permanentemente o conteúdo do índice no repositório com git commit :
+  $ git commit
+
+Isso solicitará uma mensagem de confirmação. Agora você armazenou a primeira versão do seu projeto no Git.
+
+# Fazendo mudanças
+
+1.Modifique alguns arquivos e adicione seus conteúdos atualizados ao índice:
+  $ git add file1 file2 file3
+
+2.Agora você está pronto para se comprometer. Você pode ver o que está prestes a ser confirmado usando git diff com
+a opção --cached:
+  $ git diff --cached
+
+(Sem --cached, git diff mostrará a você todas as mudanças que você fez, mas ainda não adicionou ao índice.) 
+
+3.Você também pode obter um breve resumo da situação com o status do git :
+  $ git status
+________________________________________________________________________________
+No mestre de filial
+Mudanças a serem confirmadas:
+Sua filial está atualizada com 'origem / mestre'.
+  (use "git restore --staged <file> ..." para descompactar)
+
+	modificado: arquivo1
+	modificado: arquivo2
+	modificado: arquivo3
+________________________________________________________________________________    
+
+4.Se você precisar fazer mais ajustes, faça-o agora e, em seguida, adicione qualquer conteúdo recém-modificado ao índice.
+  $ git commit
+
+5.Alternativamente, em vez de executar git add de antemão, você pode usar
+  $ git commit -a
+
+# Visualizando o histórico do projeto
+
+1.A qualquer momento, você pode ver o histórico de suas alterações usando
+  $ git log
+
+2.Se você também quiser ver diferenças completas em cada etapa, use
+  $ git log -p
+
+3.Muitas vezes, a visão geral da mudança é útil para ter uma ideia de cada etapa
+  $ git log --stat --summary

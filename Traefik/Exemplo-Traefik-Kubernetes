@@ -1,0 +1,91 @@
+## Traefik com Kubernetes
+
+Veja mais sobre: [Traefik com kubernetes](https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes/)
+
+1.Um cluster ativo do Kubernetes. Se quiser acompanhar este guia, você deve configurar o [minikube](https://kubernetes.io/docs/setup/) em sua máquina, pois é a
+maneira mais rápida de obter uma configuração de cluster local do Kubernetes para experimentação e desenvolvimento.
+
+2.Configure o ingresso como um complemento. Ele pode ser ativado pelo seguinte comando:
+  $ minikube addons enable ingress
+
+________________________________________________________________________
+Exemplos de k8s de traefik-ds.yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  selector:
+    matchLabels:
+      k8s-app: traefik-ingress-lb
+      name: traefik-ingress-lb
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      containers:
+      - image: traefik:v1.7
+        name: traefik-ingress-lb
+        ports:
+        - name: http
+          containerPort: 80
+          hostPort: 80
+        - name: admin
+          containerPort: 8080
+          hostPort: 8080
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - NET_BIND_SERVICE
+        args:
+        - --api
+        - --kubernetes
+        - --logLevel=INFO
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+________________________________________________________________________
+
+3.Para implantar o Traefik em seu cluster, comece enviando um dos arquivos YAML para o cluster com kubectl:
+  $ kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v1.7/examples/k8s/traefik-deployment.yaml
+  $ kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v1.7/examples/k8s
+
+4.Verifique os pods 
+  $ kubectl --namespace=kube-system get pods
+  
+_________________________________________________________________________________
+NAME                                         READY     STATUS    RESTARTS   AGE
+kube-addon-manager-minikubevm                1/1       Running   0          4h
+kubernetes-dashboard-s8krj                   1/1       Running   0          4h
+traefik-ingress-controller-678226159-eqseo   1/1       Running   0          7m
+_________________________________________________________________________________
+
