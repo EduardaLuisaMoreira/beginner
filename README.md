@@ -6,7 +6,7 @@ Treinamento-Iniciante-Cursos
 
 A partir do momento em que nascemos, começamos a aprender coisas novas e não saberemos tudo até morrermos. 
 Se você quer evoluir, deve acompanhar as mudanças no mundo e continuar aprendendo. 
-Para a melhor experiência, aprendizados e novos conhecimentos dos nossos futuros DevOpss da CloudOpss. 
+Para a melhor experiência, aprendizados e novos conhecimentos dos nossos futuros DevOpss. 
 Fizemos uma listagem para curso, termos técnicos e Links.
 
 Como:
